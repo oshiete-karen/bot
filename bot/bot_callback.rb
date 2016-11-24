@@ -1,7 +1,10 @@
 require 'sinatra/base'
+# require 'pry'
 
 class Callback < Sinatra::Base
   post '/bot_callback' do
-    p request.body
+    # これを入れるとブレークポイントになってデバッグできます。require 'pry'が必要です。
+    # binding.pry
+    "ok"
   end
 end
