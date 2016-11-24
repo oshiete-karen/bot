@@ -1,8 +1,7 @@
-require 'webrick'
-include WEBrick
+require 'sinatra/base'
 
-class ServletAction < WEBrick::HTTPServlet::AbstractServlet
-    def do_POST (req, res)
-        res.body = '教えて'
-    end
+class Callback < Sinatra::Base
+  post '/bot_callback' do
+    p request.body
+  end
 end
