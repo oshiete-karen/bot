@@ -38,6 +38,7 @@ GEM
     mime-types-data (3.2016.0521)
     multi_json (1.12.1)
     multipart-post (2.0.0)
+    mysql2 (0.4.5)
     os (0.9.6)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -71,6 +72,7 @@ PLATFORMS
 
 DEPENDENCIES
   google-api-client
+  mysql2
   pry
   pry-byebug
   rack
