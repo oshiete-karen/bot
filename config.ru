@@ -5,7 +5,6 @@ require './bot/bot_callback'
 require './bot/google_calendar_callback'
 
 class App < Sinatra::Base
-
   configure do
     set :bind, '0,0,0,0'
     set :port, 443
