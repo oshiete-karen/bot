@@ -23,7 +23,7 @@ class GoogleCalendarCallback < Sinatra::Base
   end
 
   get "/oauth2callback" do
-    client_secrets = Google::APIClient::ClientSecrets.load("./bot/client_secrets.json")
+    client_secrets = Google::APIClient::ClientSecrets.load("./config/client_secrets.json")
     auth_client = client_secrets.to_authorization
     auth_client.update!(
       :scope => "https://www.googleapis.com/auth/calendar",

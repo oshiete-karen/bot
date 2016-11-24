@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require 'sinatra/base'
 # ここで分割したルーティングのクラスを読み込んで下さい
-require './bot/bot_callback'
-require './bot/google_calendar_callback'
+require './src/bot_callback'
+require './src/google_calendar_callback'
 
 class App < Sinatra::Base
   configure do
@@ -31,7 +31,7 @@ class App < Sinatra::Base
   use GoogleCalendarCallback
 end
 
-$config = YAML.load_file('./config.yaml')
+$config = YAML.load_file('./config/config.yaml')
 $client = Mysql2::Client.new($config["db"])
 
 run App
