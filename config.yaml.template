@@ -1,5 +1,6 @@
 db:
   host: 'localhost'
   port: 3306
+  database: 'oshiete_karen'
   username: 'root'
   password: ''

@@ -32,4 +32,7 @@ class App < Sinatra::Base
   use GoogleCalendarCallback
 end
 
+$config = YAML.load_file('./config.yaml')
+$client = Mysql2::Client.new($config["db"])
+
 run App

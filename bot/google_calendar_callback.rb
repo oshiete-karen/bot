@@ -4,23 +4,22 @@ require "mysql2"
 require 'yaml'
 require "json"
 require "sinatra/base"
-# require "pry"
-
-config = YAML.load_file('./config.yaml')
-client = Mysql2::Client.new(config["db"])
 
 class GoogleCalendarCallback < Sinatra::Base
   enable :sessions
   set :session_secret, "setme"
 
+  # このurlはカレンによってユーザに伝えられる。友達登録直後とか、認証してないけどコマンドとして認識できるを発言されたときとか。
   get "/auth/:id" do # インクリメンタルな数字じゃなくてハッシュ化した方がよさそう
-    binding.pry
-    unless has_credentials?(params[:id])
+    credentials = get_credentials_by(params[:id])
+    if credentials
+      client_opts = JSON.parse(credentials)
+      auth_client = Signet::OAuth2::Client.new(client_opts)
+      "Google Calendarの情報を参照、編集する権限は認証済みです"
+    else
+      session[:id] = params[:id]
       redirect to("/oauth2callback")
     end
-    client_opts = JSON.parse(session[:credentials])
-    auth_client = Signet::OAuth2::Client.new(client_opts)
-    "Google Calendarの情報を参照、編集する権限は認証済みです"
   end
 
   get "/oauth2callback" do
@@ -28,7 +27,8 @@ class GoogleCalendarCallback < Sinatra::Base
     auth_client = client_secrets.to_authorization
     auth_client.update!(
       :scope => "https://www.googleapis.com/auth/calendar",
-      :redirect_uri => url("/oauth2callback"))
+      :redirect_uri => url("/oauth2callback"),
+      :state => "id=#{session[:id]}")
     if request["code"] == nil
       auth_uri = auth_client.authorization_uri.to_s
       redirect to(auth_uri)
@@ -36,17 +36,25 @@ class GoogleCalendarCallback < Sinatra::Base
       auth_client.code = request["code"]
       auth_client.fetch_access_token!
       auth_client.client_secret = nil
-      # TODO: sessionじゃなくてDBに入れる
-      session[:credentials] = auth_client.to_json
-      redirect to("/auth")
+      update_credentials(session[:id], auth_client.to_json)
+      redirect to("/auth/#{session[:id]}")
     end
   end
 end
 
-def has_credentials?(id)
-  sql = %q{SELECT refresh_token FROM user WHERE id = ?}
-  statement = client.prepare(sql)
+def get_credentials_by(id)
+  sql = %q{SELECT google_credentials_json FROM user WHERE id = ?}
+  statement = $client.prepare(sql)
   result = statement.execute(id)
-  binding.pry
-  !result.empty?
+
+  result ? result.first["google_credentials_json"] : nil
+end
+
+def update_credentials(id, json)
+  # 友達登録時にid, name, midは確定する前提
+  sql = %q{UPDATE user SET google_credentials_json = ? WHERE id = ?}
+  statement = $client.prepare(sql)
+  result = statement.execute(json, id)
+
+  result ? result.first : nil
 end

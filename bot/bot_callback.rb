@@ -1,5 +1,4 @@
-require 'sinatra/base'
-require 'pry'
+require "sinatra/base"
 
 class BotCallback < Sinatra::Base
   post '/api/bot_callback' do
