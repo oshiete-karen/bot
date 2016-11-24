@@ -1,15 +1,21 @@
 require "google/apis/calendar_v3"
 require "google/api_client/client_secrets"
+require "mysql2"
+require 'yaml'
 require "json"
 require "sinatra/base"
 # require "pry"
+
+config = YAML.load_file('./config.yaml')
+client = Mysql2::Client.new(config["db"])
 
 class GoogleCalendarCallback < Sinatra::Base
   enable :sessions
   set :session_secret, "setme"
 
-  get "/auth" do
-    unless session.has_key?(:credentials)
+  get "/auth/:id" do # インクリメンタルな数字じゃなくてハッシュ化した方がよさそう
+    binding.pry
+    unless has_credentials?(params[:id])
       redirect to("/oauth2callback")
     end
     client_opts = JSON.parse(session[:credentials])
@@ -35,4 +41,12 @@ class GoogleCalendarCallback < Sinatra::Base
       redirect to("/auth")
     end
   end
+end
+
+def has_credentials?(id)
+  sql = %q{SELECT refresh_token FROM user WHERE id = ?}
+  statement = client.prepare(sql)
+  result = statement.execute(id)
+  binding.pry
+  !result.empty?
 end
