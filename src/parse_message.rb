@@ -40,13 +40,8 @@ end
 def tell_schedule(msg,mid)
   ret = "予定はありません"
 
-  # sql = %q{SELECT google_credentials_json FROM user WHERE mid = ?}
-  # statement = $client.prepare(sql)
-  # result = statement.execute(mid)
-
-  # cr = result.first['google_credentials_json']
   cr = get_credentials_by_mid(mid)
-  p cr
+  # TODO: これを使ってgoogleカレンダーにアクセスして予定を取得
 
   # TODO: パターンを増やしていく
   today = /今日の予定[を教えて|をおしえて|は何？|は？]/
