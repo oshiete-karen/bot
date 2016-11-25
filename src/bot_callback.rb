@@ -36,7 +36,12 @@ class BotCallback < Sinatra::Base
         # TODO: 名前は取れないみたいなので仮
         result = statement.execute(event['source']['userId'], 'noname')
 
-        client.push_message(event['replyToken'], ['友達に追加されました（botより）'])
+        # client.push_message(event['replyToken'], ['友達に追加されました（botより）'])
+        message = {
+            type: 'text',
+            text: '友達に追加されました（botより）'
+        }
+        client.reply_message(event['replyToken'], message)
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
