@@ -67,4 +67,17 @@ class BotCallback < Sinatra::Base
     "ok"
   end
 
+  post '/api/push_message' do
+    sql = %q{SELECT mid FROM user WHERE name = ?}
+    statement = $client.prepare(sql)
+    result = statement.execute('かどたに')
+    mid = result.first['mid']
+    message = {
+      type: 'text',
+      text: 'pushです'
+    }
+    client.push_message(mid, message)
+    "OK"
+  end
+
 end
