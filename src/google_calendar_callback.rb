@@ -50,6 +50,14 @@ def get_credentials_by(id)
   result ? result.first["google_credentials_json"] : nil
 end
 
+def get_credentials_by_mid(mid)
+  sql = %q{SELECT google_credentials_json FROM user WHERE mid = ?}
+  statement = $client.prepare(sql)
+  result = statement.execute(mid)
+
+  return result ? result.first["google_credentials_json"] : nil
+end
+
 def update_credentials(id, json)
   # 友達登録時にid, name, midは確定する前提
   sql = %q{UPDATE user SET google_credentials_json = ? WHERE id = ?}
