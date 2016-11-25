@@ -50,13 +50,14 @@ class BotCallback < Sinatra::Base
         case event.type
         when Line::Bot::Event::MessageType::Text
 
-          # 「私の名前は。。。です」をパースして名前を登録する。など  
+          # 「私の名前は。。。です」をパースして名前を登録する。など
+          return parse_message(event.message['text'], event['source']['userId'])
 
-          message = {
-            type: 'text',
-            text: event.message['text']
-          }
-          client.reply_message(event['replyToken'], message)
+        #   message = {
+        #     type: 'text',
+        #     text: event.message['text']
+        #   }
+        #   client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           message = {
             type: 'text',
