@@ -7,10 +7,8 @@ class BotCallback < Sinatra::Base
 
   def client
     @client ||= Line::Bot::Client.new { |config|
-
-      config.channel_secret = "ee76c0d1cfc09bd3b338c284f11ab81c"
-      config.channel_token = "yla2nurLR9n6mWc2QzHkM5BlcFJkSM34RQFNG2DW9oYNeO8imbiS7eN/AjxCoSa51gNqWNxEaP1h6B/P/ABEpEVuOENAC4qTLPQL38SLzS8Yis6m3gCtigEWeQSz3NBFKHR1qxHy2NWLfc8z90l5xgdB04t89/1O/w1cDnyilFU="
-
+      config.channel_secret = $config['channel']['channel_secret']
+      config.channel_token = $config['channel']['channel_token']
       #config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
       #config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
     }
