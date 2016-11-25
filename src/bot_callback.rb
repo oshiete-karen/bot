@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'pry'
 require 'line/bot'
+require 'mysql2'
 
 
 class BotCallback < Sinatra::Base
@@ -35,7 +36,7 @@ class BotCallback < Sinatra::Base
         # TODO: 名前は取れないみたいなので仮
         result = statement.execute(event['source']['userId'], 'noname')
 
-        client.push_message(event['replyToken'], '友達に追加されました（botより）')
+        client.push_message(event['replyToken'], ['友達に追加されました（botより）'])
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
