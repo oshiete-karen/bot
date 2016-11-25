@@ -7,3 +7,7 @@ CREATE TABLE user (
   google_credentials_json TEXT,
   PRIMARY KEY (`id`)
 );
+
+ALTER TABLE user
+  MODIFY COLUMN name VARCHAR(36) DEFAULT NULL,
+  MODIFY COLUMN mid VARCHAR(36) NOT NULL UNIQUE;

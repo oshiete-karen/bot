@@ -30,18 +30,22 @@ class BotCallback < Sinatra::Base
       case event
       when Line::Bot::Event::Follow
         # DBにuser_idを登録
-        sql = %q{INSERT INTO user (mid,name) VALUES (?,?)}
+        sql = %q{INSERT INTO user (mid) VALUES (?)}
         statement = $client.prepare(sql)
-
-        # TODO: 名前は取れないみたいなので仮
-        result = statement.execute(event['source']['userId'], 'noname')
-
-        # client.push_message(event['replyToken'], ['友達に追加されました（botより）'])
+        result = statement.execute(event['source']['userId'])
         message = {
             type: 'text',
             text: '友達に追加されました（botより）'
         }
         client.reply_message(event['replyToken'], message)
+
+      when Line::Bot::Event::Unfollow
+        # DBから該当MIDを削除
+        sql = %q{DELETE FROM user WHERE mid = ?}
+        statement = $client.prepare(sql)
+        result = statement.execute(event['source']['userId'])
+        p 'deleted user'
+
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
@@ -52,7 +56,7 @@ class BotCallback < Sinatra::Base
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
           response = client.get_message_content(event.message['id'])
-          tf = Tempfile.open("content")
+          tf = Tempfile.open('content')
           tf.write(response.body)
         end
       end
