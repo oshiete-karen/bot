@@ -12,7 +12,7 @@ def parse_message(msg, mid)
 	ret = register_name(msg,mid)
   elsif msg.match(/.+の予定を教えて$/) then
 	ret = tell_schedule(msg,mid)
-  elsif msg.match(/登録/) then
+  elsif msg.match(/^登録.+/) then
 	ret = register_schedule(msg,mid)
   else
     ret = "わかりません。使い方を見たい時は「教えて」と言ってください"
@@ -83,5 +83,5 @@ end
 # p parse_message("登録12月25日15時にクリスマス","dummy")
 # p parse_message("登録：12月25日15時にクリスマス","dummy")
 # p parse_message("登録ふふうf12月25日15時にクリスマス","dummy")
-# p parse_message("登録11112月25日15時にクリスマス","dummy")
+# p parse_message("登録11112月25日15時にクリスマス","dummy") # できません
 # p parse_message("登録 12/25 15:00 クリスマス2","dummy")
