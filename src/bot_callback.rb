@@ -49,15 +49,20 @@ class BotCallback < Sinatra::Base
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
+
+          # 「私の名前は。。。です」をパースして名前を登録する。など  
+
           message = {
             type: 'text',
             text: event.message['text']
           }
           client.reply_message(event['replyToken'], message)
         when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
-          response = client.get_message_content(event.message['id'])
-          tf = Tempfile.open('content')
-          tf.write(response.body)
+          message = {
+            type: 'text',
+            text: '画像とかは、あかんよ'
+          }
+          client.reply_message(event['replyToken'], message)
         end
       end
     }
