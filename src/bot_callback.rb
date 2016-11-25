@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'pry'
 require 'line/bot'
+require 'mysql2'
 
 
 class BotCallback < Sinatra::Base
@@ -21,28 +22,51 @@ class BotCallback < Sinatra::Base
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
     unless client.validate_signature(body, signature)
-        error 400 do 'Bad Request' end
+      error 400 do 'Bad Request' end
     end
 
     events = client.parse_events_from(body)
     events.each { |event|
-        case event
-        when Line::Bot::Event::Message
-        case event.type
-            when Line::Bot::Event::MessageType::Text
-                message = {
-                    type: 'text',
-                    text: event.message['text']
-                }
-                client.reply_message(event['replyToken'], message)
-            when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
-                response = client.get_message_content(event.message['id'])
-                tf = Tempfile.open("content")
-                tf.write(response.body)
-            end
-        end
-    }
+      case event
+      when Line::Bot::Event::Follow
+        # DBにuser_idを登録
+        sql = %q{INSERT INTO user (mid) VALUES (?)}
+        statement = $client.prepare(sql)
+        result = statement.execute(event['source']['userId'])
+        message = {
+            type: 'text',
+            text: '友達に追加されました（botより）'
+        }
+        client.reply_message(event['replyToken'], message)
 
+      when Line::Bot::Event::Unfollow
+        # DBから該当MIDを削除
+        sql = %q{DELETE FROM user WHERE mid = ?}
+        statement = $client.prepare(sql)
+        result = statement.execute(event['source']['userId'])
+        p 'deleted user'
+
+      when Line::Bot::Event::Message
+        case event.type
+        when Line::Bot::Event::MessageType::Text
+
+          # 「私の名前は。。。です」をパースして名前を登録する。など  
+
+          message = {
+            type: 'text',
+            text: event.message['text']
+          }
+          client.reply_message(event['replyToken'], message)
+        when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
+          message = {
+            type: 'text',
+            text: '画像とかは、あかんよ'
+          }
+          client.reply_message(event['replyToken'], message)
+        end
+      end
+    }
     "ok"
   end
+
 end
