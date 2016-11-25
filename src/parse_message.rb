@@ -6,10 +6,10 @@ require 'mysql2'
 def parse_message(msg, mid)
   ret = ""
 
-  if msg.match(/^教えて.*$/) then
+  if msg.match(/^[教えて|help|ヘルプ].*$/) then
     ret = explain_help()
   elsif msg.match(/^私の名前は(.+)です$/) then
-	ret = register_name(msg,mid)
+	ret = register_name($1,mid)
   elsif msg.match(/.+の予定を教えて$/) then
 	ret = tell_schedule(msg,mid)
   elsif msg.match(/^登録.+/) then
@@ -28,13 +28,12 @@ def explain_help()
 end
 
 # 名前の登録
-def register_name(msg,mid)
-  name = msg.gsub(/^私の名前は(.+)です$/, '\1')
+def register_name(name,mid)
   sql = %q{UPDATE user SET name = ? WHERE mid = ?}
   statement = $client.prepare(sql)
   result = statement.execute(name,mid)
   ret = name + "さん。こんにちは。お名前を登録しました。"
-  retun ret
+  return ret
 end
 
 # 予定を教えてあげる
@@ -71,14 +70,24 @@ end
 # $config = YAML.load_file('./config/config.yaml')
 # $client = Mysql2::Client.new($config["db"])
 
+# 何もしないやつ
 # p parse_message("ホゲホゲ", "dummy")
 
+# 名前の登録さん
 # p parse_message("私の名前はあつしです", "dummy")
 
+# ヘルプ
 # p parse_message("教えてカレン", "dummy")
 # p parse_message("教えて", "dummy")
+# p parse_message("help", "dummy")
+# p parse_message("help me", "dummy")
+# p parse_message("ヘルプ", "dummy")
+# p parse_message("ヘルプミー", "dummy")
+
+# 予定問い合わせ
 # p parse_message("今日の予定を教えて", "dummy")
 
+# 予定登録
 # p parse_message("登録したい 12月25日15時にクリスマス","dummy")
 # p parse_message("登録12月25日15時にクリスマス","dummy")
 # p parse_message("登録：12月25日15時にクリスマス","dummy")
