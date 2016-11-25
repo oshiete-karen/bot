@@ -27,6 +27,15 @@ class BotCallback < Sinatra::Base
     events = client.parse_events_from(body)
     events.each { |event|
       case event
+      when Line::Bot::Event::Follow
+        # DBにuser_idを登録
+        sql = %q{INSERT INTO user (mid,name) VALUES (?,?)}
+        statement = $client.prepare(sql)
+
+        # TODO: 名前は取れないみたいなので仮
+        result = statement.execute(event['source']['userId'], 'noname')
+
+        client.push_message(event['replyToken'], '友達に追加されました（botより）')
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
