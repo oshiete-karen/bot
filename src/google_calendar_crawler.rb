@@ -8,7 +8,8 @@ require "pry"
 config = YAML.load_file("./config/config.yaml")
 mysql_client = Mysql2::Client.new(config["db"])
 token_store = Google::Auth::Stores::MySQLTokenStore.new(mysql_client)
-_credentials = token_store.load(ARGV[0])
+user_id = ARGV[0]
+_credentials = token_store.load(user_id)
 APPLICATION_NAME = 'Google Calendar API Ruby Quickstart'
 CLIENT_SECRETS_PATH = './config/client_secrets.json'
 CREDENTIALS_PATH = File.join(Dir.home, '.credentials',
@@ -34,6 +35,10 @@ response = service.list_events(calendar_id,
                                time_min: Time.now.iso8601)
 
 response.items.each do |event|
-  start = event.start.date || event.start.date_time
-  puts "- #{event.summary} (#{start})"
+  # あとでbulk insertのやり方を調べる
+  # values = response.items.map { |event| "(#{event.id}, user_id, #{event.summary}, #{event.start}, #{event.end})" }.join(",")
+  sql = "INSERT IGNORE INTO events (`id`, `user_id`, `summary`, `start`, `end`) VALUES (?, ?, ?, ?, ?);"
+  statement = mysql_client.prepare(sql)
+  p event.id
+  result = statement.execute(event.id, user_id, event.summary, event.start.date_time, event.end.date_time)
 end

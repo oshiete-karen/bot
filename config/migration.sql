@@ -32,5 +32,5 @@ CREATE TABLE events (
   summary TEXT NOT NULL,
   start DATETIME,
   end DATETIME,
-  FOREIGN KEY (`user_id`) REFERENCES user (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES user (`id`)
 );
