@@ -25,3 +25,12 @@ CREATE TABLE credential (
 
 ALTER TABLE user
   DROP google_credentials_json;
+
+CREATE TABLE events (
+  id VARCHAR(36) PRIMARY KEY,
+  user_id MEDIUMINT unsigned NOT NULL,
+  summary TEXT NOT NULL,
+  start DATETIME,
+  end DATETIME,
+  FOREIGN KEY (`user_id`) REFERENCES user (`id`),
+);

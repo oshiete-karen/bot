@@ -1,5 +1,3 @@
-require "google/apis/calendar_v3"
-require "google/api_client/client_secrets"
 require "googleauth"
 require "mysql2"
 require 'yaml'
