@@ -73,6 +73,7 @@ PLATFORMS
 
 DEPENDENCIES
   google-api-client
+  googleauth
   line-bot-api
   mysql2
   pry
@@ -81,4 +82,4 @@ DEPENDENCIES
   sinatra
 
 BUNDLED WITH
-   1.13.6
+   1.10.6

@@ -11,3 +11,17 @@ CREATE TABLE user (
 ALTER TABLE user
   MODIFY COLUMN name VARCHAR(36) DEFAULT NULL,
   MODIFY COLUMN mid VARCHAR(36) NOT NULL UNIQUE;
+
+CREATE TABLE credential (
+  user_id MEDIUMINT unsigned PRIMARY KEY,
+  client_id TEXT NOT NULL,
+  access_token TEXT NOT NULL,
+  refresh_token TEXT NOT NULL,
+  expiration_time_millis BIGINT UNSIGNED,
+  scope TEXT NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES user (`id`),
+  UNIQUE (client_id(255), access_token(255), refresh_token(255))
+);
+
+ALTER TABLE user
+  DROP google_credentials_json;
