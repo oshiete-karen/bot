@@ -18,6 +18,7 @@ class UserEvents
   def initialize(user_id)
     @user_id = user_id
     _credentials = @@token_store.load(user_id)
+    if _credentials.nil? then raise "user_id: #{user_id} has no credentials" end
     @service = Google::Apis::CalendarV3::CalendarService.new
     # @service.client_options.application_name = APPLICATION_NAME
     client_id = Google::Auth::ClientId.from_file(CLIENT_SECRETS_PATH)
