@@ -4,3 +4,7 @@ db:
   database: 'oshiete_karen'
   username: 'root'
   password: ''
+
+channel:
+  channel_secret: 'fill your bot's channel secret'
+  channel_token: 'fill your bot's channel access token'
