@@ -9,11 +9,11 @@ def parse_message(msg, mid)
   if msg.match(/^[教えて|help|ヘルプ].*$/) then
     ret = explain_help()
   elsif msg.match(/^私の名前は(.+)です$/) then
-	ret = register_name($1,mid)
+    ret = register_name($1,mid)
   elsif msg.match(/.+の予定.+$/) then
-	ret = tell_schedule(msg,mid)
+    ret = tell_schedule(msg,mid)
   elsif msg.match(/^登録.+/) then
-	ret = register_schedule(msg,mid)
+    ret = register_schedule(msg,mid)
   else
     ret = "わかりません。使い方を見たい時は「教えて」と言ってください"
   end
@@ -51,9 +51,9 @@ def tell_schedule(msg,mid)
   if msg.match(today) then
     ret = "今日の予定はXXですよ（というのを実装する予定です）"
   elsif msg.match(tomorrow) then
-	ret = "明日の予定はXXですよ（というのを実装する予定です）"
+  ret = "明日の予定はXXですよ（というのを実装する予定です）"
   elsif msg.match(day_after_tomorrow) then
-	ret = "明後日の予定はXXですよ（というのを実装する予定です）"
+  ret = "明後日の予定はXXですよ（というのを実装する予定です）"
   end
 
   return ret
@@ -75,7 +75,7 @@ def register_schedule(msg,mid)
     if msg.match(pattern) then
       # TODO: 登録をする
       ret = $1 + "月" + $2 + "日" + $3 + "時 " + $4 + " という予定を登録しました（というのを実装する予定です）"
-	  break
+    break
     end
   }
 
