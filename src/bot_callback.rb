@@ -3,9 +3,7 @@ require 'pry'
 require 'line/bot'
 require 'mysql2'
 
-
 class BotCallback < Sinatra::Base
-
   def client
     @client ||= Line::Bot::Client.new { |config|
       config.channel_secret = $config['channel']['channel_secret']
@@ -16,9 +14,6 @@ class BotCallback < Sinatra::Base
   end
 
   post '/api/bot_callback' do
-    # これを入れるとブレークポイントになってデバッグできます。require 'pry'が必要です。
-    # binding.pry
-
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
     unless client.validate_signature(body, signature)
@@ -36,6 +31,15 @@ class BotCallback < Sinatra::Base
         message = {
             type: 'text',
             text: '友達に追加されました（botより）'
+        }
+        client.reply_message(event['replyToken'], message)
+
+        sql = %q{SELECT id FROM user WHERE mid = ?}
+        statement = $client.prepare(sql)
+        result = statement.execute(event['source']['userId'])
+        message = {
+            type: 'text',
+            text: 'http://oshiete-karen.com/auth/#{result.first["id"]}'
         }
         client.reply_message(event['replyToken'], message)
 

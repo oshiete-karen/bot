@@ -2,6 +2,15 @@ require 'pry'
 require 'line/bot'
 require 'mysql2'
 
+# TODO: before doっぽいDSLを作って底に入れる。
+def exist?(mid)
+  sql = %q{SELECT mid from user WHERE mid = ?}
+  statement = $client.prepare(sql)
+  result = statement.execute(mid)
+
+  !result.first.empty?
+end
+
 # メッセージを受け取り、返信用メッセージ文字列を返却する
 def parse_message(msg, mid)
   ret = ""
@@ -28,12 +37,15 @@ def explain_help()
 end
 
 # 名前の登録
-def register_name(name,mid)
-  sql = %q{UPDATE user SET name = ? WHERE mid = ?}
-  statement = $client.prepare(sql)
-  result = statement.execute(name,mid)
-  ret = name + "さん。こんにちは。お名前を登録しました。"
-  return ret
+def register_name(name, mid)
+  if exist?(mid)
+    sql = %q{UPDATE user SET name = ? WHERE mid = ?}
+    statement = $client.prepare(sql)
+    result = statement.execute(name,mid)
+    "#{name}さん。こんにちは。お名前を登録しました。"
+  else
+    register_id
+  end
 end
 
 # 予定を教えてあげる
