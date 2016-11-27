@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'pry'
 require 'line/bot'
 require 'mysql2'
+require "./src/user_events"
 
 class BotCallback < Sinatra::Base
   def client
@@ -33,7 +34,17 @@ class BotCallback < Sinatra::Base
     result = statement.execute(event['source']['userId'])
   end
 
-  def fetch_initial_events
+  def mid_to_user_id(mid)
+    sql = %q{SELECT id FROM user WHERE mid = ?}
+    statement = $client.prepare(sql)
+    result = statement.execute(mid)
+
+    result.first
+  end
+
+  def fetch_initial_events(user_id)
+    events = UserEvents.new(mid_to_user_id(user_id))
+    events.store(events.fetch)
   end
 
   post '/api/bot_callback' do
