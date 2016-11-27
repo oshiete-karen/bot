@@ -17,6 +17,7 @@ class BotCallback < Sinatra::Base
     events = client.parse_events_from(body)
     mid = events.first['source']['userId']
     register_id(mid) until exist?(mid)
+    fetch_and_store_initial_events(user_id) until any_events?(mid_to_id(mid))
     #対象となるカレンダーを登録させたいが、とりあえずその人の一番最初に見つかるカレンダーを対象とする
     #register_calendar until has_calendar_be_registered?(mid)
   end
@@ -43,8 +44,8 @@ class BotCallback < Sinatra::Base
     result.first
   end
 
-  def fetch_initial_events(user_id)
-    events = UserEvents.new(mid_to_user_id(user_id))
+  def fetch_and_store_initial_events(user_id)
+    events = UserEvents.new(user_id)
     events.store(events.fetch)
   end
 
