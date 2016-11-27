@@ -9,8 +9,6 @@ class BotCallback < Sinatra::Base
     @client ||= Line::Bot::Client.new { |config|
       config.channel_secret = $config['channel']['channel_secret']
       config.channel_token = $config['channel']['channel_token']
-      #config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
-      #config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
     }
   end
 
