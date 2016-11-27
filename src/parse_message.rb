@@ -2,32 +2,19 @@ require 'pry'
 require 'line/bot'
 require 'mysql2'
 
-# TODO: before doっぽいDSLを作って底に入れる。
-def exist?(mid)
-  sql = %q{SELECT mid from user WHERE mid = ?}
-  statement = $client.prepare(sql)
-  result = statement.execute(mid)
-
-  !result.first.empty?
-end
-
 # メッセージを受け取り、返信用メッセージ文字列を返却する
 def parse_message(msg, mid)
-  ret = ""
-
-  if msg.match(/^[教えて|help|ヘルプ].*$/) then
-    ret = explain_help()
-  elsif msg.match(/^私の名前は(.+)です$/) then
-    ret = register_name($1,mid)
-  elsif msg.match(/.+の予定.+$/) then
-    ret = tell_schedule(msg,mid)
-  elsif msg.match(/^登録.+/) then
-    ret = register_schedule(msg,mid)
+  if msg.match(/^[教えて|help|ヘルプ].*$/)
+    explain_help()
+  elsif msg.match(/^私の名前は(.+)です$/)
+    register_name($1,mid)
+  elsif msg.match(/.+の予定.+$/)
+    tell_schedule(msg,mid)
+  elsif msg.match(/^登録.+/)
+    register_schedule(msg,mid)
   else
-    ret = "わかりません。使い方を見たい時は「教えて」と言ってください"
+    "わかりません。使い方を見たい時は「教えて」と言ってください"
   end
-
-  return ret
 end
 
 # ヘルプ
@@ -38,14 +25,10 @@ end
 
 # 名前の登録
 def register_name(name, mid)
-  if exist?(mid)
-    sql = %q{UPDATE user SET name = ? WHERE mid = ?}
-    statement = $client.prepare(sql)
-    result = statement.execute(name,mid)
-    "#{name}さん。こんにちは。お名前を登録しました。"
-  else
-    register_id
-  end
+  sql = %q{UPDATE user SET name = ? WHERE mid = ?}
+  statement = $client.prepare(sql)
+  result = statement.execute(name,mid)
+  "#{name}さん。こんにちは。お名前を登録しました。"
 end
 
 # 予定を教えてあげる

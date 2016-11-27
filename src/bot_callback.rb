@@ -13,6 +13,29 @@ class BotCallback < Sinatra::Base
     }
   end
 
+  before do
+    register_id until exist?(mid)
+    #対象となるカレンダーを登録させたいが、とりあえずその人の一番最初に見つかるカレンダーを対象とする
+    #register_calendar until has_calendar_be_registered?(mid)
+  end
+
+  def exist?(mid)
+    sql = %q{SELECT mid from user WHERE mid = ?}
+    statement = $client.prepare(sql)
+    result = statement.execute(mid)
+
+    !result.first.nil?
+  end
+
+  def register_id
+    sql = %q{INSERT INTO user (mid) VALUES (?)}
+    statement = $client.prepare(sql)
+    result = statement.execute(event['source']['userId'])
+  end
+
+  def fetch_initial_events
+  end
+
   post '/api/bot_callback' do
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
@@ -24,10 +47,7 @@ class BotCallback < Sinatra::Base
     events.each { |event|
       case event
       when Line::Bot::Event::Follow
-        # DBにuser_idを登録
-        sql = %q{INSERT INTO user (mid) VALUES (?)}
-        statement = $client.prepare(sql)
-        result = statement.execute(event['source']['userId'])
+        register_id
         message = {
             type: 'text',
             text: '友達に追加されました（botより）'
