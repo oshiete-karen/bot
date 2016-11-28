@@ -45,7 +45,6 @@ module Google
           sql = %q{SELECT * FROM credential WHERE user_id = ?}
           statement = @client.prepare(sql)
           result = statement.execute(_id)
-
           result.first ? result.first.tap {|obj| obj["scope"] = JSON.parse(obj["scope"]) } : nil
         end
 

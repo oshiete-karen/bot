@@ -12,14 +12,15 @@ class BotCallback < Sinatra::Base
     }
   end
 
-  before do
+  before '/api/bot_callback' do
     body = request.body.read
     events = client.parse_events_from(body)
     mid = events.first['source']['userId']
-    register_id(mid) until exist?(mid)
-    fetch_and_store_initial_events(user_id) until any_events?(mid_to_id(mid))
+    register_id(mid) unless exist?(mid)
+    request_authentication(mid, events) unless has_authenticated?(mid)
     #対象となるカレンダーを登録させたいが、とりあえずその人の一番最初に見つかるカレンダーを対象とする
-    #register_calendar until has_calendar_be_registered?(mid)
+    #register_calendar unless has_calendar_be_registered?(mid)
+    # fetch_and_store_initial_events(mid) unless any_events?(mid)
   end
 
   def exist?(mid)
@@ -30,10 +31,36 @@ class BotCallback < Sinatra::Base
     !result.first.nil?
   end
 
+  def any_events?(mid)
+    sql = %q{SELECT user_id FROM events WHERE user_id = ?}
+    statement = $client.prepare(sql)
+    result = statement.execute(mid_to_user_id(mid))
+
+    !result.first.nil?
+  end
+
+  def has_authenticated?(mid)
+    sql = %q{SELECT user_id FROM credential WHERE user_id = ?}
+    statement = $client.prepare(sql)
+    result = statement.execute(mid_to_user_id(mid))
+
+    !result.first.nil?
+  end
+
   def register_id(mid)
     sql = %q{INSERT INTO user (mid) VALUES (?)}
     statement = $client.prepare(sql)
     result = statement.execute(mid)
+  end
+
+  def request_authentication(mid, events)
+    # TODO template messageにする
+    # https://devdocs.line.me/ja/#imagemap-message#template-message
+    message = {
+        type: 'text',
+        text: "https://oshietekaren.info/api/auth/#{mid_to_user_id(mid)}"
+    }
+    client.reply_message(events.first['replyToken'], message)
   end
 
   def mid_to_user_id(mid)
@@ -41,11 +68,11 @@ class BotCallback < Sinatra::Base
     statement = $client.prepare(sql)
     result = statement.execute(mid)
 
-    result.first
+    result.first["id"]
   end
 
-  def fetch_and_store_initial_events(user_id)
-    events = UserEvents.new(user_id)
+  def fetch_and_store_initial_events(mid)
+    events = UserEvents.new(mid_to_user_id(mid))
     events.store(events.fetch)
   end
 
@@ -63,15 +90,6 @@ class BotCallback < Sinatra::Base
         message = {
             type: 'text',
             text: '友達に追加されました（botより）'
-        }
-        client.reply_message(event['replyToken'], message)
-
-        sql = %q{SELECT id FROM user WHERE mid = ?}
-        statement = $client.prepare(sql)
-        result = statement.execute(event['source']['userId'])
-        message = {
-            type: 'text',
-            text: 'http://oshiete-karen.com/auth/#{result.first["id"]}'
         }
         client.reply_message(event['replyToken'], message)
 
