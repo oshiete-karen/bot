@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'sinatra/base'
 # ここで分割したルーティングのクラスを読み込んで下さい
-require './src/bot_callback'
-require './src/google_calendar_callback'
-require './src/parse_message'
+require './app/bot_callback'
+require './app/google_calendar_callback'
+require './app/parse_message'
 
 class App < Sinatra::Base
   configure do

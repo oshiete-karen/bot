@@ -1,10 +1,9 @@
+require "sinatra/base"
 require "googleauth"
 require "mysql2"
 require 'yaml'
 require "json"
-require "sinatra/base"
-require "./src/mysql_token_store"
-
+require "./app/mysql_token_store"
 
 class GoogleCalendarCallback < Sinatra::Base
   enable :sessions
@@ -15,7 +14,6 @@ class GoogleCalendarCallback < Sinatra::Base
   @@client_id = Google::Auth::ClientId.from_file("./config/client_secrets.json")
   @@token_store = Google::Auth::Stores::MySQLTokenStore.new(@@mysql_client)
   @@authorizer = Google::Auth::WebUserAuthorizer.new(@@client_id, @@scope, @@token_store, '/api/oauth2callback')
-  # OOB_URI = "http://localhost:9292"
   OOB_URI = "https://oshietekaren.info"
 
   # このurlはカレンによってユーザに伝えられる。友達登録直後とか、認証してないけどコマンドとして認識できるを発言されたときとか。
@@ -26,7 +24,7 @@ class GoogleCalendarCallback < Sinatra::Base
       redirect @@authorizer.get_authorization_url(login_hint: user_id, request: request, base_url: OOB_URI)
     end
 
-    "あなたはすでにGoogle Calendarの参照権限をカレンちゃんに渡しています。LINEの画面に戻って操作を続けて下さい。"
+    "Google Calendarの参照権限をカレンちゃんに渡しました。LINEの画面に戻って操作を続けて下さい。"
   end
 
   get "/api/oauth2callback" do

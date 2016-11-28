@@ -3,7 +3,7 @@ require 'googleauth'
 require 'googleauth/stores/file_token_store'
 require 'fileutils'
 require "mysql2"
-require "./src/mysql_token_store"
+require "./app/mysql_token_store"
 
 APPLICATION_NAME = 'Google Calendar API Ruby Quickstart'
 CLIENT_SECRETS_PATH = './config/client_secrets.json'

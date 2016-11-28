@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'pry'
 require 'line/bot'
 require 'mysql2'
-require "./src/user_events"
+require "./app/user_events"
 
 class BotCallback < Sinatra::Base
   def client
