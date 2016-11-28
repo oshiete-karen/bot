@@ -45,7 +45,7 @@ module Google
           sql = %q{SELECT * FROM credential WHERE user_id = ?}
           statement = @client.prepare(sql)
           result = statement.execute(_id)
-          result.first ? result.first.tap {|obj| obj["scope"] = JSON.parse(obj["scope"]) } : nil
+          result.first ? result.first.tap {|obj| obj['scope'] = JSON.parse(obj['scope']) } : nil
         end
 
         # Put the token data into storage for the given ID.
@@ -61,7 +61,7 @@ module Google
             VALUES (?, ?, ?, ?, ?, ?)
           }
           statement = @client.prepare(sql)
-          result = statement.execute(_id, token["client_id"], token["access_token"], token["refresh_token"], token["expiration_time_millis"], token["scope"].to_json)
+          result = statement.execute(_id, token['client_id'], token['access_token'], token['refresh_token'], token['expiration_time_millis'], token['scope'].to_json)
         end
 
         # Remove the token data from storage for the given ID.

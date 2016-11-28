@@ -1,4 +1,3 @@
-require 'pry'
 require 'line/bot'
 require 'mysql2'
 
@@ -13,13 +12,13 @@ def parse_message(msg, mid)
   elsif msg.match(/^登録.+/)
     register_schedule(msg,mid)
   else
-    "わかりません。使い方を見たい時は「教えて」と言ってください"
+    'わかりません。使い方を見たい時は「教えて」と言ってください'
   end
 end
 
 # ヘルプ
 def explain_help()
-  ret = "予定を教えてあげるカレンちゃんです"
+  ret = '予定を教えてあげるカレンちゃんです'
   return ret
 end
 
@@ -33,7 +32,7 @@ end
 
 # 予定を教えてあげる
 def tell_schedule(msg,mid)
-  ret = "予定はありません"
+  ret = '予定はありません'
 
   cr = get_credentials_by_mid(mid)
   # TODO: これを使ってgoogleカレンダーにアクセスして予定を取得
@@ -44,11 +43,11 @@ def tell_schedule(msg,mid)
   day_after_tomorrow = /明後日の予定[を教えて|をおしえて|は何？|は？]/
 
   if msg.match(today) then
-    ret = "今日の予定はXXですよ（というのを実装する予定です）"
+    ret = '今日の予定はXXですよ（というのを実装する予定です）'
   elsif msg.match(tomorrow) then
-  ret = "明日の予定はXXですよ（というのを実装する予定です）"
+  ret = '明日の予定はXXですよ（というのを実装する予定です）'
   elsif msg.match(day_after_tomorrow) then
-  ret = "明後日の予定はXXですよ（というのを実装する予定です）"
+  ret = '明後日の予定はXXですよ（というのを実装する予定です）'
   end
 
   return ret
@@ -57,7 +56,7 @@ end
 # 予定を登録する
 def register_schedule(msg,mid)
 
-  ret = "予定を登録できませんでした"
+  ret = '予定を登録できませんでした'
 
   # 分は、余裕があれば
   # 月、日、時、内容 の４要素がこの順に並ぶものを受け付ける（ TODO: パターンを広げていく）
@@ -69,7 +68,7 @@ def register_schedule(msg,mid)
   patterns.each { |pattern|
     if msg.match(pattern) then
       # TODO: 登録をする
-      ret = $1 + "月" + $2 + "日" + $3 + "時 " + $4 + " という予定を登録しました（というのを実装する予定です）"
+      ret = $1 + '月' + $2 + '日' + $3 + '時 ' + $4 + ' という予定を登録しました（というのを実装する予定です）'
     break
     end
   }
@@ -80,37 +79,37 @@ end
 
 # test
 # $config = YAML.load_file('./config/config.yaml')
-# $client = Mysql2::Client.new($config["db"])
+# $client = Mysql2::Client.new($config['db'])
 
 # 何もしないやつ
-# p parse_message("ホゲホゲ", "dummy")
+# p parse_message('ホゲホゲ', 'dummy')
 
 # 名前の登録さん
-# p parse_message("私の名前はあつしです", "dummy")
+# p parse_message('私の名前はあつしです', 'dummy')
 
 # ヘルプ
-# p parse_message("教えてカレン", "dummy")
-# p parse_message("教えて", "dummy")
-# p parse_message("help", "dummy")
-# p parse_message("help me", "dummy")
-# p parse_message("ヘルプ", "dummy")
-# p parse_message("ヘルプミー", "dummy")
+# p parse_message('教えてカレン', 'dummy')
+# p parse_message('教えて', 'dummy')
+# p parse_message('help', 'dummy')
+# p parse_message('help me', 'dummy')
+# p parse_message('ヘルプ', 'dummy')
+# p parse_message('ヘルプミー', 'dummy')
 
 # 予定問い合わせ
-# p parse_message("今日の予定を教えて", "dummy")
-# p parse_message("今日の予定をおしえて", "dummy")
-# p parse_message("今日の予定は？", "dummy")
-# p parse_message("明日の予定を教えて", "dummy")
-# p parse_message("明日の予定をおしえて", "dummy")
-# p parse_message("明日の予定は？", "dummy")
-# p parse_message("明後日の予定を教えて", "dummy")
-# p parse_message("明後日の予定をおしえて", "dummy")
-# p parse_message("明後日の予定は？", "dummy")
+# p parse_message('今日の予定を教えて', 'dummy')
+# p parse_message('今日の予定をおしえて', 'dummy')
+# p parse_message('今日の予定は？', 'dummy')
+# p parse_message('明日の予定を教えて', 'dummy')
+# p parse_message('明日の予定をおしえて', 'dummy')
+# p parse_message('明日の予定は？', 'dummy')
+# p parse_message('明後日の予定を教えて', 'dummy')
+# p parse_message('明後日の予定をおしえて', 'dummy')
+# p parse_message('明後日の予定は？', 'dummy')
 
 # 予定登録
-# p parse_message("登録したい 12月25日15時にクリスマス","dummy")
-# p parse_message("登録12月25日15時にクリスマス","dummy")
-# p parse_message("登録：12月25日15時にクリスマス","dummy")
-# p parse_message("登録ふふうf12月25日15時にクリスマス","dummy")
-# p parse_message("登録11112月25日15時にクリスマス","dummy") # できません
-# p parse_message("登録 12/25 15:00 クリスマス2","dummy")
+# p parse_message('登録したい 12月25日15時にクリスマス','dummy')
+# p parse_message('登録12月25日15時にクリスマス','dummy')
+# p parse_message('登録：12月25日15時にクリスマス','dummy')
+# p parse_message('登録ふふうf12月25日15時にクリスマス','dummy')
+# p parse_message('登録11112月25日15時にクリスマス','dummy') # できません
+# p parse_message('登録 12/25 15:00 クリスマス2','dummy')

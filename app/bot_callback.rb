@@ -2,7 +2,7 @@ require 'sinatra/base'
 require 'pry'
 require 'line/bot'
 require 'mysql2'
-require "./app/user_events"
+require './app/user_events'
 
 class BotCallback < Sinatra::Base
   def client
@@ -68,7 +68,7 @@ class BotCallback < Sinatra::Base
     statement = $client.prepare(sql)
     result = statement.execute(mid)
 
-    result.first["id"]
+    result.first['id']
   end
 
   def fetch_and_store_initial_events(mid)
@@ -118,7 +118,7 @@ class BotCallback < Sinatra::Base
         end
       end
     }
-    "ok"
+    'ok'
   end
 
 # こんな感じでpush届きます
@@ -132,7 +132,7 @@ class BotCallback < Sinatra::Base
   #     text: 'pushです'
   #   }
   #   client.push_message(mid, message)
-  #   "OK"
+  #   'OK'
   # end
 
 end
