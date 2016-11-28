@@ -20,7 +20,7 @@ class BotCallback < Sinatra::Base
     request_authentication(mid, events) unless has_authenticated?(mid)
     #対象となるカレンダーを登録させたいが、とりあえずその人の一番最初に見つかるカレンダーを対象とする
     #register_calendar unless has_calendar_be_registered?(mid)
-    # fetch_and_store_initial_events(mid) unless any_events?(mid)
+    fetch_and_store_initial_events(mid) unless any_events?(mid)
   end
 
   def exist?(mid)
